@@ -1,19 +1,28 @@
 package fop.w12synch;
 
 public class RW {
+    private int countReaders = 0;
     public synchronized void startRead() throws InterruptedException {
-        throw new RuntimeException("Not implemented");
+        while (countReaders < 0)
+         this.wait();
+        countReaders++;
     }
 
     public synchronized void endRead() {
-        throw new RuntimeException("Not implemented");
+        countReaders--;
+        if(countReaders == 0)
+            this.notify();
     }
 
     public synchronized void startWrite() throws InterruptedException {
-        throw new RuntimeException("Not implemented");
+        while (countReaders != 0)
+            this.wait();
+        countReaders = -1;
+
     }
 
     public synchronized void endWrite() {
-        throw new RuntimeException("Not implemented");
+        countReaders = 0;
+        notifyAll();
     }
 }
